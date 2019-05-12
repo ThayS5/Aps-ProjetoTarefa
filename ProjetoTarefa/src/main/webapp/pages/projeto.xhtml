@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="/templates/modeloGeral.xhtml">
+	<ui:define name="conteudo">
+
+		<p:growl id="mensagem" />
+
+		<h:form id="formListagem">
+			<p:panel header="Projeto - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" paginatorPosition="bottom"
+					value="#{projetoBean.projetos}" var="projeto" rows="7">
+					<f:facet name="footer">
+						<p:commandButton value="Novo" oncomplete="PF('dialogo').show();"
+							actionListener="#{projetoBean.novo}"
+							update=":formCadastro:painel " icon="fa fa-plus">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</f:facet>
+					<p:column headerText="Nome">
+						<h:outputText value="#{projeto.nome}" />
+					</p:column>
+
+					<p:column headerText="Descrição">
+						<h:outputText value="#{projeto.descricao}" />
+					</p:column>
+
+					<p:column headerText="Opções">
+						<p:commandButton icon="fa fa-trash"
+							actionListener="#{projetoBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Atenção!" message="Deseja excluir o Projeto?"
+								icon="fa fa-exclamation-triangle" />
+							<f:attribute name="projetoSelecionado" value="#{projeto}" />
+						</p:commandButton>
+						<p:commandButton icon="fa fa-edit"
+							actionListener="#{projetoBean.editar}"
+							update=":mensagem :formCadastro:painel"
+							oncomplete="PF('dialogo').show();">
+							<f:attribute name="projetoSelecionado" value="#{projeto}" />
+						</p:commandButton>
+					</p:column>
+
+
+				</p:dataTable>
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="fa fa-check-square-o" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="fa fa-close" />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+		<p:dialog header="Projeto - Cadastro" widgetVar="dialogo"
+			resizable="false" draggable="false" modal="true" appendTo="@(body)">
+			<h:form id="formCadastro">
+				<h:panelGrid columns="2" id="painel">
+
+					<p:outputLabel for="nome" value="Nome do projeto:" />
+					<p:inputText id="nome" value="#{projetoBean.projeto.nome}"
+						size="50" maxlength="60" required="true"
+						requiredMessage="O Nome do projeto é obrigatório" />
+
+					<p:outputLabel for="desc" value="Descrição do projeto:" />
+					<p:inputTextarea id="desc" value="#{projetoBean.projeto.descricao}"
+						cols="100" maxlength="200" required="true"
+						requiredMessage="A descrição do projeto é obrigatória" />
+
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{projetoBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela "
+						icon="fa fa-save" oncomplete="PF('dialogo').hide();" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();"
+						icon="fa fa-close" />
+				</h:panelGrid>
+				<h:panelGrid>
+					<h:outputText value="(*) Campos obrigatórios" />
+				</h:panelGrid>
+
+			</h:form>
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>
+
+</html>

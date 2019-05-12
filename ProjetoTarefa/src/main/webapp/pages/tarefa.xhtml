@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+
+<ui:composition template="/templates/modeloGeral.xhtml">
+	<ui:define name="conteudo">
+	
+		<p:growl id="mensagem" />
+		<h:form id="formListagem">
+			<p:panel header="Tarefa - Listagem">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" paginatorPosition="bottom" value="#{tarefaBean.tarefas}" var="tarefa"
+					rows="7">
+					<f:facet name="footer">
+						<p:commandButton value="Novo"
+							actionListener="#{tarefaBean.novo}"
+							oncomplete="PF('dialogo').show();"
+							update=":mensagem :formCadastro:painel" 
+							icon="fa fa-plus" >
+						<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener"/>
+					</p:commandButton>	
+					</f:facet>
+
+					<p:column headerText="Nome" filterBy="#{tarefa.nome}">
+						<h:outputText value="#{tarefa.nome}" />
+					</p:column>
+					<p:column headerText="Descrição">
+						<h:outputText value="#{tarefa.descricao}" />
+					</p:column>
+
+					<p:column headerText="Projeto">
+						<h:outputText value="#{tarefa.projeto.nome}" />			
+					</p:column>
+
+					<p:column headerText="Opções">
+						<p:commandButton icon="fa fa-trash"
+							actionListener="#{tarefaBean.excluir}"
+							update=":mensagem :formListagem:tabela">
+							<p:confirm header="Atenção!" message="Deseja excluir a Tarefa"
+								icon="fa fa-exclamation-triangle" />
+							<f:attribute name="tarefaSelecionada" value="#{tarefa}" />
+						</p:commandButton>
+
+						<p:commandButton icon="fa fa-edit"
+							actionListener="#{tarefaBean.editar}"
+							update=":mensagem :formCadastro:painel" oncomplete="PF('dialogo').show();">
+							<f:attribute name="tarefaSelecionada" value="#{tarefa}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener"/>
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="fa fa-check-square-o"/>
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="fa fa-close"  />
+				</p:confirmDialog>
+
+			</p:panel>
+		</h:form>
+		<p:dialog header="Tarefa - Cadastro" widgetVar="dialogo"
+			resizable="false" draggable="false" modal="true" appendTo="@(body)">
+			<h:form id="formCadastro">
+				<h:panelGrid id="painel" columns="2">
+
+					<p:outputLabel for="nome" value="Nome:" />
+					<p:inputText id="nome" value="#{tarefaBean.tarefa.nome}" size="98"
+						maxlength="50" required="true"  requiredMessage="O campo Nome é obrigatório"/>
+						
+					<p:outputLabel for="desc" value="Descrição:" />
+					<p:inputTextarea id="desc" value="#{tarefaBean.tarefa.descricao}" cols="100"
+					maxlength="200" required="true"  requiredMessage="O campo Descrição é obrigatório"/>	
+					
+					
+ 					<p:outputLabel for="dataVecimento" value="Data de Vencimento:" />	
+ 					<p:calendar id="dataVecimento" value="#{tarefaBean.tarefa.dataVencimento}"
+ 					pattern="dd/MM/yyyy" mask="true"/>	
+ 						
+ 						
+					<p:outputLabel for="projeto" value="Projeto:" />
+					<p:selectOneMenu id="projeto" filter="true" value="#{tarefaBean.tarefa.projeto}"
+						converter="omnifaces.SelectItemsConverter" required="true" requiredMessage="Selecione um Projeto">
+						<f:selectItem noSelectionOption="true" itemLabel="Selecione um projeto" />
+						<f:selectItems value="#{tarefaBean.projetos}" var="projeto"
+							itemValue="#{projeto}" itemLabel="#{projeto.nome}" />
+
+					</p:selectOneMenu>
+					
+					
+					<p:outputLabel for="situacao" value="Situação" />
+					<p:selectOneMenu id="situacao" filter="true" value="#{tarefaBean.tarefa.situacao}"
+						converter="omnifaces.SelectItemsConverter" required="true" requiredMessage="Selecione a Situação">
+						<f:selectItem noSelectionOption="true" itemLabel="Selecione a situação" />
+						<f:selectItems value="#{tarefaBean.situacoes}" var="situacao"
+							itemValue="#{situacao}" itemLabel="#{situacao.descricao}" />
+ 
+					</p:selectOneMenu>
+
+				</h:panelGrid>
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{tarefaBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela"
+						icon="fa fa-save"
+						oncomplete="PF('dialogo').hide();"  />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();"
+					icon="fa fa-close"  />
+					
+				</h:panelGrid>
+				<h:panelGrid>
+					<h:outputText value="(*) Campos obrigatórios" />
+				</h:panelGrid>	
+
+	
+			</h:form> 
+		</p:dialog>
+
+	</ui:define>
+</ui:composition>
+</html>
