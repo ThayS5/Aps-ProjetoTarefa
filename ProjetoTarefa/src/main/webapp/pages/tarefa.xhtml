@@ -51,6 +51,14 @@
 							<f:attribute name="tarefaSelecionada" value="#{tarefa}" />
 							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener"/>
 						</p:commandButton>
+						
+						<p:commandButton icon="fa fa-edit"
+							
+							oncomplete="PF('dialogo').show();">
+							<f:attribute name="tarefaSelecionada" value="#{tarefa}" />
+							<f:actionListener type="org.omnifaces.eventlistener.ResetInputAjaxActionListener"/>
+						</p:commandButton>
+						
 					</p:column>
 				</p:dataTable>
 
@@ -119,6 +127,8 @@
 	
 			</h:form> 
 		</p:dialog>
+		
+		
 
 	</ui:define>
 </ui:composition>
